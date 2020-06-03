@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "461729138329",
+    "firebase_url": "https://chopping-project.firebaseio.com",
+    "project_id": "chopping-project",
+    "storage_bucket": "chopping-project.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:461729138329:android:ee4583f0c26128c3dc5a08",
+        "android_client_info": {
+          "package_name": "com.example.choppingmobile"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "461729138329-701g6qphieotnk4qaubhllbkphu153sv.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.choppingmobile",
+            "certificate_hash": "e4e915f60bcc8d4c912ce366ad5b2fd8fc7add97"
+          }
+        },
+        {
+          "client_id": "461729138329-pajtftpub0sp0sopkk9hvot2v4shoimt.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCMMY2f4pjD6w2cRF_4r0u7pNi2E51XG7U"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "461729138329-pajtftpub0sp0sopkk9hvot2v4shoimt.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
