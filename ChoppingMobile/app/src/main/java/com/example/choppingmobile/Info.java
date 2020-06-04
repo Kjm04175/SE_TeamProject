@@ -22,6 +22,15 @@ public class Info {
         pNumber=_pNumber;
         address=_address;
     }
+    public void setInfo(Map<String, Object> data)
+    {
+        name= (String) data.get("Name");
+        gender=(String)data.get("Gender");
+        birth=(String)data.get("Birth");
+        pNumber=(String)data.get("PhoneNumber");
+        address=(String)data.get("Address");
+    }
+
     public Map<String, Object> toMap()
     {
         HashMap<String, Object> result = new HashMap<>();

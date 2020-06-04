@@ -9,7 +9,9 @@ public class User {
     public Info userInfo;
     public User()
     {
-
+        id="null";
+        password="null";
+        userInfo=new Info();
     }
     public User(String _id, String _password, Info _info)
     {
@@ -17,7 +19,12 @@ public class User {
         password=_password;
         userInfo = _info;
     }
-
+    public void setUser(Map<String, Object> data)
+    {
+        id=(String)data.get("ID");
+        password=(String) data.get("Password");
+        userInfo.setInfo((HashMap<String,Object>)data.get("Info"));
+    }
     public Map<String, Object> toMap()
     {
         HashMap<String, Object> result = new HashMap<>();
@@ -25,7 +32,6 @@ public class User {
         result.put("Password",password);
         result.put("Info",userInfo.toMap());
         return result;
-
     }
 
 }
