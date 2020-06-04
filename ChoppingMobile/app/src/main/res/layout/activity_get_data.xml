@@ -4,37 +4,24 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".MainActivity">
+    tools:context=".GetData">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:id="@+id/mainLayout">
-        <FrameLayout
-            android:layout_width="400dp"
-            android:layout_height="400dp"
-            android:id="@+id/fragmentLayout"
-            >
-        </FrameLayout>
+        android:id="@+id/getDataLayout"
+        >
         <TextView
-            android:text="GetData"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/getTextView"
+            android:text="Getvalue"
+            android:id="@+id/printTView"
             />
         <Button
-        android:id="@+id/messageBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SendMessage"
-        android:layout_gravity="center"
-        />
-        <Button
-            android:id="@+id/searchBtn"
-            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="GetMessage"
-            android:layout_gravity="center"
+            android:layout_width="wrap_content"
+            android:text="GetData!"
+            android:id="@+id/getDataBtn"
             />
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
