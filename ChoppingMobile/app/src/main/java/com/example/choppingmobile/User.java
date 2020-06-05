@@ -19,6 +19,17 @@ public class User {
         password=_password;
         userInfo = _info;
     }
+    public void setUser(String _id, String _password, Info _info)
+    {
+        id=_id;
+        password=_password;
+        userInfo = _info;
+    }
+    public void setUser(String _id, String _password)
+    {
+        id=_id;
+        password=_password;
+    }
     public void setUser(Map<String, Object> data)
     {
         id=(String)data.get("ID");

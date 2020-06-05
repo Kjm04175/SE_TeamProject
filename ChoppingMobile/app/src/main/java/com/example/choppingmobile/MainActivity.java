@@ -9,17 +9,18 @@ import android.view.View;
 import android.widget.Button;
 
 import com.facebook.login.Login;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class MainActivity extends AppCompatActivity {
+    public static MainActivity mainActivity;
+    public FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    public DatabaseReference databaseReference = firebaseDatabase.getReference();
 
-    private FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-    private DatabaseReference databaseReference = firebaseDatabase.getReference();
     HashMap<String, Object> childUpdates = null;
     Map<String, Object> userValue = null;
     User user;
@@ -27,15 +28,13 @@ public class MainActivity extends AppCompatActivity {
     Button getMessage;
     LoginFragment loginScreen;
     SignupFragment signupScreen;
-    FirebaseFirestore db;
-    public static MainActivity mainActivity;
+
     enum Screen{
         Login, SignUp,OpenMarket,Community
     }
     private void init()
     {
         mainActivity =this;
-        db = FirebaseFirestore.getInstance();
         loginScreen=new LoginFragment();
         signupScreen=new SignupFragment();
     }
@@ -55,7 +54,6 @@ public class MainActivity extends AppCompatActivity {
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //databaseReference.child("message").push().setValue("2");
                 userValue=user.toMap();
                 childUpdates.put("/User/"+"KCS1234",userValue);
                 databaseReference.updateChildren(childUpdates);
@@ -68,6 +66,17 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+    public static Map<String, Object> JSONtoMap(DataSnapshot dataSnapshot)
+    {
+        Map<String, Object> map = new HashMap<>();
+        for(DataSnapshot ds: dataSnapshot.getChildren())
+        {
+            String key = ds.getKey();
+            Object val = ds.getValue();
+            map.put(key,val);
+        }
+        return map;
     }
     public void setScreen(Screen screen)
     {

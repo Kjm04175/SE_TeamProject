@@ -1,5 +1,6 @@
 package com.example.choppingmobile;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -19,7 +20,6 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
-import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -74,6 +74,7 @@ public class LoginFragment extends Fragment {
     private Button loginBtn;
     private Query getID;
     private EditText idEdit;
+    private EditText pwEdit;
     DatabaseReference mDBReference = null;
     String inputData;
     private void init(ViewGroup vg)
@@ -81,7 +82,8 @@ public class LoginFragment extends Fragment {
         signUpBtn=vg.findViewById(R.id.signUpBtn);
         loginBtn=vg.findViewById(R.id.loginBtn);
         idEdit=vg.findViewById(R.id.idEdit);
-        mDBReference= FirebaseDatabase.getInstance().getReference("User");
+        pwEdit=vg.findViewById(R.id.pwEdit);
+        mDBReference= MainActivity.mainActivity.firebaseDatabase.getReference("User");//FirebaseDatabase.getInstance().getReference("User");
         getID = mDBReference.orderByChild("ID");//.equalTo("ID");
     }
     @Override
@@ -100,8 +102,18 @@ public class LoginFragment extends Fragment {
                         if(dataSnapshot.exists())
                         {
                             Toast.makeText(getContext(),"Exist!",Toast.LENGTH_SHORT).show();
-                            Log.w("Get",dataSnapshot.getValue().toString());
-                        }
+                            Log.w("Get",dataSnapshot.child("/"+inputData).getValue().toString());
+                            Map<String, Object> userData = MainActivity.JSONtoMap(dataSnapshot.child("/"+inputData));
+                            Log.w("Get",userData.get("Password").toString());
+                            if(userData.get("Password").toString().equals(pwEdit.getText().toString()))
+                            {
+                                Toast.makeText(getContext(),"valid!",Toast.LENGTH_SHORT).show();
+                            }
+                            else
+                            {
+                                Toast.makeText(getContext(),"invalid!",Toast.LENGTH_SHORT).show();
+                            }
+                    }
                         else
                         {
                             Toast.makeText(getContext(),"No Exist!",Toast.LENGTH_SHORT).show();
