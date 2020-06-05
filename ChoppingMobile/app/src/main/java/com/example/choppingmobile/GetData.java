@@ -21,6 +21,7 @@ import java.util.Map;
 
 public class GetData extends AppCompatActivity {
 
+    FirebaseDatabase mDBinstance=null;
     DatabaseReference mDBReference = null;
     HashMap<String, Object> childUpdate = null;
     Map<String, Object> userValue=null;
@@ -32,7 +33,8 @@ public class GetData extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_get_data);
-        mDBReference = FirebaseDatabase.getInstance().getReference("User/KCS1234");
+        mDBinstance=FirebaseDatabase.getInstance();
+        mDBReference = mDBinstance.getReference("User/KCS1234");
         getBtn=findViewById(R.id.getDataBtn);
         printTxt = findViewById(R.id.printTView);
         getBtn.setOnClickListener(new View.OnClickListener() {

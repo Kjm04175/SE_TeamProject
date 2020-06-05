@@ -22,6 +22,15 @@ public class Info {
         pNumber=_pNumber;
         address=_address;
     }
+    public void setInfo(String _name, String _gender, String _birth, String _pNumber, String _address)
+    {
+        name=_name;
+        gender=_gender;
+        birth=_birth;
+        pNumber=_pNumber;
+        address=_address;
+    }
+
     public void setInfo(Map<String, Object> data)
     {
         name= (String) data.get("Name");
