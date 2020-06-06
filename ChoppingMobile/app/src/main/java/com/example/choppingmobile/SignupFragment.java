@@ -113,8 +113,11 @@ public class SignupFragment extends Fragment {
         submitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(validation())
+                if(validation()) {
                     signUp(composeUserData());
+                    Toast.makeText(getContext(),"회원가입이 완료되었습니다",Toast.LENGTH_SHORT).show();
+                    MainActivity.mainActivity.setScreen(MainActivity.Screen.Login);
+                }
                 else
                     Toast.makeText(getContext(), "필수 입력 항목이 입력되지 않았습니다.", Toast.LENGTH_SHORT).show();
             }

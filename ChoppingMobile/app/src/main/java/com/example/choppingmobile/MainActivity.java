@@ -87,6 +87,7 @@ public class MainActivity extends AppCompatActivity {
         else if(screen==Screen.SignUp) {
             transaction.replace(R.id.fragmentLayout, signupScreen).commit();
         }
-        transaction.addToBackStack(null);
+        if(screen!=Screen.Login)
+            transaction.addToBackStack(null);
     }
 }
