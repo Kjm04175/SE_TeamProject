@@ -18,6 +18,7 @@
             android:background="#FFFFFF"
             android:layout_gravity="center"
             android:layout_margin="15dp"
+            android:inputType="text"
             android:id="@+id/idEdit"
             />
         <EditText
@@ -26,6 +27,7 @@
             android:background="#FFFFFF"
             android:layout_gravity="center"
             android:layout_margin="15dp"
+            android:inputType="textPassword"
             android:id="@+id/pwEdit"
             />
         <LinearLayout
