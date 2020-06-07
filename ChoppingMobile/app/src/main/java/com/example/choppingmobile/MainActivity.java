@@ -1,17 +1,22 @@
 package com.example.choppingmobile;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
-import com.facebook.login.Login;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -19,6 +24,7 @@ import java.util.Map;
 public class MainActivity extends AppCompatActivity {
     public static MainActivity mainActivity;
     public FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+    public FirebaseFirestore db = FirebaseFirestore.getInstance();
     public DatabaseReference databaseReference = firebaseDatabase.getReference();
 
     HashMap<String, Object> childUpdates = null;
@@ -54,9 +60,17 @@ public class MainActivity extends AppCompatActivity {
         sendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                userValue=user.toMap();
-                childUpdates.put("/User/"+"KCS1234",userValue);
-                databaseReference.updateChildren(childUpdates);
+                db.collection("User").add(user).addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                    @Override
+                    public void onSuccess(DocumentReference documentReference) {
+                        Log.d("db","DocumentSnapShot added with ID: "+documentReference.getId());
+                    }
+                }).addOnFailureListener(new OnFailureListener() {
+                    @Override
+                    public void onFailure(@NonNull Exception e) {
+                        Log.d("db","Error adding document",e);
+                    }
+                });
             }
         });
         getMessage.setOnClickListener(new View.OnClickListener() {
@@ -85,6 +99,7 @@ public class MainActivity extends AppCompatActivity {
             transaction.replace(R.id.fragmentLayout, loginScreen).commit();
         }
         else if(screen==Screen.SignUp) {
+            signupScreen=new SignupFragment();
             transaction.replace(R.id.fragmentLayout, signupScreen).commit();
         }
         if(screen!=Screen.Login)

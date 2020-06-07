@@ -1,6 +1,7 @@
 package com.example.choppingmobile;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -14,12 +15,18 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.Query;
+
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -76,6 +83,7 @@ public class LoginFragment extends Fragment {
     private EditText idEdit;
     private EditText pwEdit;
     DatabaseReference mDBReference = null;
+    FirebaseFirestore db=null;
     String inputData;
     private void init(ViewGroup vg)
     {
@@ -83,8 +91,10 @@ public class LoginFragment extends Fragment {
         loginBtn=vg.findViewById(R.id.loginBtn);
         idEdit=vg.findViewById(R.id.idEdit);
         pwEdit=vg.findViewById(R.id.pwEdit);
-        mDBReference= MainActivity.mainActivity.firebaseDatabase.getReference("User");//FirebaseDatabase.getInstance().getReference("User");
-        getID = mDBReference.orderByChild("ID");//.equalTo("ID");
+        db=MainActivity.mainActivity.db;
+        getID=db.collection("User");
+        //mDBReference= MainActivity.mainActivity.firebaseDatabase.getReference("User");//FirebaseDatabase.getInstance().getReference("User");
+        //getID = mDBReference.orderByChild("ID");//.equalTo("ID");
     }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -96,35 +106,37 @@ public class LoginFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 inputData=idEdit.getText().toString();
-                getID.equalTo(inputData).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        if(dataSnapshot.exists())
-                        {
-                            Toast.makeText(getContext(),"Exist!",Toast.LENGTH_SHORT).show();
-                            Log.w("Get",dataSnapshot.child("/"+inputData).getValue().toString());
-                            Map<String, Object> userData = MainActivity.JSONtoMap(dataSnapshot.child("/"+inputData));
-                            Log.w("Get",userData.get("Password").toString());
-                            if(userData.get("Password").toString().equals(pwEdit.getText().toString()))
-                            {
-                                Toast.makeText(getContext(),"valid!",Toast.LENGTH_SHORT).show();
+                getID.whereEqualTo("id",inputData)
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if(task.isSuccessful())
+                                {
+                                    if(task.getResult().isEmpty())//when id not Exist
+                                        Toast.makeText(getContext(),"null",Toast.LENGTH_SHORT).show();
+                                    else{//when id Exist
+                                        for (QueryDocumentSnapshot document : task.getResult()){
+                                            Log.d("getdb2",document.getId()+"==>"+document.getData());//log data(vol)
+                                            if(document.getData().get("password").toString().equals(pwEdit.getText().toString()))//loginSuccess
+                                            {
+                                                Toast.makeText(getContext(),"Login Success",Toast.LENGTH_SHORT).show();
+                                                Intent intent = new Intent(getActivity(), ServiceActivity.class);
+                                                startActivity(intent);
+                                            }
+                                            else//loginFailure(Wrong PW)
+                                            {
+                                                Toast.makeText(getContext(),"Login Fail",Toast.LENGTH_SHORT).show();
+                                            }
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    Log.w("getdb2",task.getException());
+                                }
                             }
-                            else
-                            {
-                                Toast.makeText(getContext(),"invalid!",Toast.LENGTH_SHORT).show();
-                            }
-                    }
-                        else
-                        {
-                            Toast.makeText(getContext(),"No Exist!",Toast.LENGTH_SHORT).show();
-                        }
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                });
+                        });
             }
         });
         signUpBtn.setOnClickListener(new View.OnClickListener() {

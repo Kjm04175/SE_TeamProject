@@ -1,7 +1,9 @@
 package com.example.choppingmobile;
 
+import android.graphics.Color;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import android.util.Log;
@@ -10,13 +12,18 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import com.google.firebase.database.DatabaseReference;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
+import com.google.firebase.firestore.QuerySnapshot;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
-import java.util.HashMap;
 
 
 /**
@@ -55,6 +62,8 @@ public class SignupFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+    private boolean usableID =false;
+
     private EditText idEdit;
     private EditText pwEdit;
     private EditText confirmPwEdit;
@@ -63,11 +72,17 @@ public class SignupFragment extends Fragment {
     private EditText phoneEdit;
     private EditText birthEdit;
     private EditText addrEdit;
+
+    private TextView duplicateText;
+
     private ArrayList<EditText> editLsit;
     private Button duplicateBtn;
     private Button submitBtn;
 
     private User user;
+
+    private FirebaseFirestore db;
+    private Query userQuery;
 
     public void init(ViewGroup vg)
     {
@@ -90,6 +105,10 @@ public class SignupFragment extends Fragment {
         addrEdit=vg.findViewById(R.id.addressEdit);
         editLsit.add(addrEdit);
 
+        duplicateText=vg.findViewById(R.id.duplicateText);
+
+        db=MainActivity.mainActivity.db;
+        userQuery = db.collection("User");
         duplicateBtn = vg.findViewById(R.id.idDuplicateconfirmBtn);
         submitBtn = vg.findViewById(R.id.signUpSubmitBtn);
 
@@ -115,27 +134,67 @@ public class SignupFragment extends Fragment {
             public void onClick(View v) {
                 if(validation()) {
                     signUp(composeUserData());
-                    Toast.makeText(getContext(),"회원가입이 완료되었습니다",Toast.LENGTH_SHORT).show();
                     MainActivity.mainActivity.setScreen(MainActivity.Screen.Login);
                 }
-                else
-                    Toast.makeText(getContext(), "필수 입력 항목이 입력되지 않았습니다.", Toast.LENGTH_SHORT).show();
+            }
+        });
+        duplicateBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String inputID=idEdit.getText().toString();
+                userQuery.whereEqualTo("id",inputID)
+                        .get()
+                        .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                                if(task.getResult().isEmpty())
+                                {
+                                    usableID =true;
+                                    duplicateText.setText("ID를 사용할 수 있습니다.");
+                                    duplicateText.setTextColor(Color.BLUE);
+                                }
+                                else
+                                {
+                                    usableID=false;
+                                    duplicateText.setText("이미 사용중인 ID입니다.");
+                                    duplicateText.setTextColor(Color.RED);
+                                }
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                                Toast.makeText(getContext(),"Error: Connection Failure",Toast.LENGTH_SHORT).show();
+                            }
+                        });
             }
         });
         return viewGroup;
     }
-    private boolean validation()
+    private boolean validation()//id, 비밀번호 복잡성, 생일 -> DateType으로, phone number형식 맞춰야함.
     {
         //여기에는 조건 넣기. ex, pw는 8글자 이하 등등
-        boolean result = true;
         for(EditText editText:editLsit)
         {
             Log.e("getText", Integer.toString(editLsit.size()));
 
             if(editText.getText().toString().equals(""))
-                result=false;
+            {
+                Toast.makeText(getContext(), "필수 입력 항목이 입력되지 않았습니다.", Toast.LENGTH_SHORT).show();
+                return false;
+            }
         }
-        return result;
+        if(!usableID)
+        {
+            Toast.makeText(getContext(),"ID 중복확인이 필요합니다.",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+        if(!pwEdit.getText().toString().equals(confirmPwEdit.getText().toString())) {
+            Toast.makeText(getContext(),"비밀번호 확인이 일치하지 않습니다.",Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        return true;
     }
     private User composeUserData()
     {
@@ -144,7 +203,6 @@ public class SignupFragment extends Fragment {
         String birthday=birthEdit.getText().toString();
         String phoneNum=phoneEdit.getText().toString();
         String address=addrEdit.getText().toString();
-
         String id = idEdit.getText().toString();
         String pw = pwEdit.getText().toString();
         user.userInfo.setInfo(name,gender,birthday,phoneNum,address);
@@ -154,9 +212,16 @@ public class SignupFragment extends Fragment {
     }
     private void signUp(User user)
     {
-        HashMap<String,Object> childUpdate = new HashMap<>();
-        childUpdate.put("/User/"+user.id,user.toMap());
-        DatabaseReference reference= MainActivity.mainActivity.databaseReference;
-        reference.updateChildren(childUpdate);
+        db.collection("User").add(user).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                Toast.makeText(getContext(),"회원가입에 성공했습니다.",Toast.LENGTH_SHORT).show();
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                Toast.makeText(getContext(),"Error: 회원가입에 실패하였습니다.",Toast.LENGTH_SHORT).show();
+            }
+        });
     }
 }

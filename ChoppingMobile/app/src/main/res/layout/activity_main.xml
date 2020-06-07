@@ -9,32 +9,42 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
+        android:weightSum="6"
         android:id="@+id/mainLayout">
         <FrameLayout
-            android:layout_width="400dp"
-            android:layout_height="400dp"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="5"
+            android:layout_margin="5dp"
             android:id="@+id/fragmentLayout"
             >
         </FrameLayout>
-        <TextView
-            android:text="GetData"
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            >
+            <TextView
+                android:text="GetData"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/getTextView"
+                />
+            <Button
+            android:id="@+id/messageBtn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/getTextView"
-            />
-        <Button
-        android:id="@+id/messageBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="SendMessage"
-        android:layout_gravity="center"
-        />
-        <Button
-            android:id="@+id/searchBtn"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="GetMessage"
+            android:text="SendMessage"
             android:layout_gravity="center"
             />
+            <Button
+                android:id="@+id/searchBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="GetMessage"
+                android:layout_gravity="center"
+                />
+        </LinearLayout>
     </LinearLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
